@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+	nodes = [
+		{ name: "k8s-1", ip: "192.168.56.11" },
+		{ name: "k8s-2", ip: "192.168.56.12" },
+		{ name: "k8s-3", ip: "192.168.56.13" },
+	]
+
+	config.vm.box = "bento/ubuntu-24.04"
+	config.vm.box_version = "202510.26.0"
+	config.ssh.insert_key = false
+
+	nodes.each do |node|
+		config.vm.define node[:name] do |machine|
+			machine.vm.hostname = node[:name]
+			machine.vm.network "private_network", ip: node[:ip]
+
+			machine.vm.provider "virtualbox" do |vb|
+				vb.name = node[:name]
+				vb.cpus = 2
+				vb.memory = 2048
+			end
+		end
+	end
+end
